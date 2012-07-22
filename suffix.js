@@ -4,11 +4,12 @@
     var Node = (function() {
         function Node() {
             this.edges = {};
+            this.isTerminal = false;
         }
 
         Node.prototype.addStr = function(str) {
             if (! str) {
-                this.edges['$'] = new Node();
+                this.isTerminal = true;
                 return;
             }
 
@@ -32,6 +33,11 @@
 
         Node.prototype.toElement = function() {
             var ret = $('<ul>');
+
+            if (this.isTerminal) {
+                ret.append($('<li>$</li>'));
+            }
+
             _.each(this.edges, function(v, k) {
                 ret.append($('<li>').append($('<span>').text(k))
                                     .append(v.toElement()));
