@@ -29,6 +29,15 @@
             return ret.join('');
         };
 
+        Node.prototype.toElement = function() {
+            var ret = $('<ul>');
+            _.each(this.edges, function(v, k) {
+                ret.append($('<li>').append($('<span>').text(k))
+                                    .append(v.toElement()));
+            });
+            return ret;
+        }
+
         return Node;
     })();
 
@@ -50,7 +59,7 @@
     }
 
     function update() {
-        $('#output').text(gen_suffix_tree($('#input').val()));
+        $('#output').html(gen_suffix_tree($('#input').val()).toElement());
     }
 
     $('form').submit(function() {
