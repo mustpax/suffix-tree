@@ -8,6 +8,7 @@
 
         Node.prototype.addStr = function(str) {
             if (! str) {
+                this.edges['$'] = new Node();
                 return;
             }
 
