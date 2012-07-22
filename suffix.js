@@ -2,9 +2,11 @@
     "use strict";
 
     var Node = (function() {
-        function Node() {
+        function Node(_parent, letter) {
             this.edges = {};
             this.isTerminal = false;
+            this._parent = _parent;
+            this.letter = letter;
         }
 
         Node.prototype.addStr = function(str) {
@@ -15,7 +17,7 @@
 
             var cur = str[0];
             if (! this.edges[cur]) {
-                this.edges[cur] = new Node();
+                this.edges[cur] = new Node(this, cur);
             }
 
             this.edges[cur].addStr(str.slice(1));
@@ -45,6 +47,29 @@
             return ret;
         };
 
+        Node.prototype.isLeaf = function() {
+            if (this.isTerminal) {
+                return _.isEmpty(this.edges);
+            } else {
+                return _.size(this.edges) === 1;
+            }
+        };
+
+        Node.prototype.compact = function() {
+            _.each(this.edges, function(v, k) {
+                v.compact();
+            });
+
+            if (this.isLeaf()) {
+                _.each(this.edges, function(v, k) {
+                    if (this._parent) {
+                        delete this._parent.edges[this.letter];
+                        this._parent.edges[this.letter + k] = v;
+                    }
+                }, this);
+            }
+        };
+
         return Node;
     })();
 
@@ -66,7 +91,12 @@
     }
 
     function update() {
-        $('#output').html(gen_suffix_tree($('#input').val()).toElement());
+        var tree = gen_suffix_tree($('#input').val());
+        $('#output').empty()
+                    .append(tree.toElement());
+        tree.compact();
+        $('#output').append($('<h1>Compact</h1>'));
+        $('#output').append(tree.toElement());
     }
 
     $('form').submit(function() {
