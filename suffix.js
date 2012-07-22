@@ -36,7 +36,7 @@
                                     .append(v.toElement()));
             });
             return ret;
-        }
+        };
 
         return Node;
     })();
